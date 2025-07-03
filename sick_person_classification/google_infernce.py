@@ -1,6 +1,7 @@
 # To run this code you need to install the following dependencies:
 # pip install google-genai && pip install pandas
 # or use the requirements.txt file
+# set the GEMINI_API_KEY environment variable before running the code
 
 import base64
 import json
@@ -80,11 +81,10 @@ def inference(csv_path, tweet_column, output_path, limit=None):
 
 
 if __name__ == "__main__":
-    csv_path = r"C:\Users\97254\Documents\all_tweets\new clusters\cancer_with_clusters.csv"
+    csv_path = r"C:\Users\97254\Documents\all_tweets\new clusters\flu_with_clusters.csv"
     tweet_column = "Tweet_Text"
     os.makedirs("outputs", exist_ok=True)
     output_path = f"outputs/{os.path.basename(csv_path).split('.')[0]}_inferred.csv"
     inference(csv_path, tweet_column, output_path, limit=10)
-
 
 
