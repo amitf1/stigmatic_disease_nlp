@@ -4,24 +4,15 @@ import pandas as pd
 import os
 import torch
 
-
-
-
-# def get_model():
-#     tokenizer = AutoTokenizer.from_pretrained("vinai/bertweet-base")
-#     model = AutoModelForMaskedLM.from_pretrained("vinai/bertweet-base")
-#     return tokenizer, model
+MODEL_NAME = "cardiffnlp/twitter-roberta-base-sentiment-latest"
 
 def get_model_and_tokenizer():
-    # Use a pre-trained sentiment analysis model specifically for Twitter
-    model_name = "cardiffnlp/twitter-roberta-base-sentiment-latest"
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModelForSequenceClassification.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+    model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME)
     
-    # Standard way to set device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = model.to(device)
-    model.eval()  # Set to evaluation mode
+    model.eval()  
     print(f"Using device: {device}")
     
     return model, tokenizer, device
@@ -37,7 +28,6 @@ def classify(tweet, model, tokenizer, device):
         probabilities = torch.softmax(logits, dim=1)
         predicted_class = torch.argmax(probabilities, dim=1).item()
     
-    # Map class indices to sentiment labels (this model uses: LABEL_0=negative, LABEL_1=neutral, LABEL_2=positive)
     sentiment_map = {0: "negative", 1: "neutral", 2: "positive"}
     return sentiment_map.get(int(predicted_class), "neutral")
 
@@ -62,10 +52,11 @@ def inference(csv_path, tweet_column, output_path, limit=None):
 
 
 if __name__ == "__main__":
-    csv_path = "/home/amit/nlp/new clusters/flu_with_clusters.csv"
+    root_dir = ""
+    csv_path = os.path.join(root_dir, "flu_with_clusters.csv")
     tweet_column = "Tweet_Text"
     os.makedirs("outputs", exist_ok=True)
-    limit = # None #400
+    limit = None #400
     limit_str =  str(limit) if limit else "all"
-    output_path = f"outputs/{os.path.basename(csv_path).split('.')[0]}_sentiment_bertweet_{limit_str}.csv"
+    output_path = f"outputs/{os.path.basename(csv_path).split('.')[0]}_sentiment_roberta_{limit_str}.csv"
     inference(csv_path, tweet_column, output_path, limit=limit)
