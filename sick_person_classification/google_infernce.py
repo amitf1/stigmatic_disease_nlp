@@ -16,8 +16,6 @@ def system_setup():
         api_key=os.environ.get("GEMINI_API_KEY"), ## create api key on google ai studio
     )
 
-    model = "gemini-2.5-flash"
-
     generate_content_config = types.GenerateContentConfig(
     thinking_config = types.ThinkingConfig(
         thinking_budget=0,
@@ -32,14 +30,23 @@ def system_setup():
             "who_is_sick": types.Schema(
                 type = types.Type.STRING,
             ),
+            "sentiment": types.Schema(
+                type = types.Type.STRING,
+            ),
+            "emotion": types.Schema(
+                type = types.Type.STRING,
+            ),
         },
     ),
     system_instruction=[
         types.Part.from_text(text="""For each given tweet, analyse the sentence and the hashtags and decide if the author is speaking on a real sickness or just as a figuer of speach. 
-    If it is a real sickness, who is the sick person? Is it the author, friends or colleagues, family, a celebrity, other person or people or unclear. Answer with only one choice and only the choice itself. """),
+    If it is a real sickness, who is the sick person? Is it the author, friends or colleagues, family, a celebrity, other person or people or unclear.
+    What's the sentiment of the tweet? Is it positive, negative or neutral.
+    What's the emotion of the tweet? Is it surprise, fear, anger, sadness, joy, disgust, or other.
+    For each question answer with only one choice and only the choice itself. Make sure to stick with the given choices."""),
     ],
     )
-    return client, model, generate_content_config
+    return client, generate_content_config
 
 def generate(input_text, client, model, generate_content_config):
     
@@ -67,9 +74,9 @@ def read_csv(file_path, tweet_column, limit=None, seed=42):
         df = df.sample(limit, random_state=seed)
     return df[["tweet_id", tweet_column]]
 
-def inference(csv_path, tweet_column, output_path, limit=None):
+def inference(csv_path, tweet_column, output_path, limit=None, model="gemini-2.5-flash"):
     results = []
-    client, model, generate_content_config = system_setup()
+    client, generate_content_config = system_setup()
     tweets = read_csv(csv_path, tweet_column, limit)
     for index, row in tweets.iterrows():
         result = generate(row[tweet_column], client, model, generate_content_config)
@@ -83,8 +90,11 @@ def inference(csv_path, tweet_column, output_path, limit=None):
 if __name__ == "__main__":
     csv_path = r"C:\Users\97254\Documents\all_tweets\new clusters\flu_with_clusters.csv"
     tweet_column = "Tweet_Text"
+    model = "gemini-2.5-flash"
     os.makedirs("outputs", exist_ok=True)
-    output_path = f"outputs/{os.path.basename(csv_path).split('.')[0]}_inferred.csv"
-    inference(csv_path, tweet_column, output_path, limit=10)
+    limit = 200
+    limit_str =  str(limit) if limit else "all"
+    output_path = f"outputs/{os.path.basename(csv_path).split('.')[0]}_{limit_str}_{model}_with_sentiment_and_emotion.csv"
+    inference(csv_path, tweet_column, output_path, limit=limit, model=model)
 
 

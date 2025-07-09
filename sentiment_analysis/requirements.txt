@@ -1,0 +1,9 @@
+transformers>=4.53.1      
+
+pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 \
+     --index-url https://download.pytorch.org/whl/cu124
+
+accelerate>=1.8.1       
+huggingface-hub>=0.33.2   
+
+emoji>=2.14.1          
