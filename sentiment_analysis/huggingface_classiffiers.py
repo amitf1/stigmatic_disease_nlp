@@ -65,7 +65,7 @@ if __name__ == "__main__":
     csv_path = "/home/amit/nlp/new clusters/flu_with_clusters.csv"
     tweet_column = "Tweet_Text"
     os.makedirs("outputs", exist_ok=True)
-    limit = 400
+    limit = # None #400
     limit_str =  str(limit) if limit else "all"
     output_path = f"outputs/{os.path.basename(csv_path).split('.')[0]}_sentiment_bertweet_{limit_str}.csv"
-    inference(csv_path, tweet_column, output_path, limit=None)
+    inference(csv_path, tweet_column, output_path, limit=limit)
