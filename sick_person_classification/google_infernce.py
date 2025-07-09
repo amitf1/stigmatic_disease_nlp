@@ -39,7 +39,7 @@ def system_setup():
         },
     ),
     system_instruction=[
-        types.Part.from_text(text="""For each given tweet, analyse the sentence and the hashtags and decide if the author is speaking on a real sickness or just as a figuer of speach. 
+        types.Part.from_text(text="""For each given tweet, analyse the sentence and the hashtags and decide if the author is speaking on a real sickness or just as a figure of speech. 
     If it is a real sickness, who is the sick person? Is it the author, friends or colleagues, family, a celebrity, other person or people or unclear.
     What's the sentiment of the tweet? Is it positive, negative or neutral.
     What's the emotion of the tweet? Is it surprise, fear, anger, sadness, joy, disgust, or other.
